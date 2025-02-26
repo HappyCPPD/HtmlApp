@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PathFindr</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9fafb;
+            color: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #2d3436;
+            padding: 20px;
+            text-align: center;
+            color: #ecf0f1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.4em;
+            font-weight: 600;
+        }
+
+        header p {
+            font-size: 1.1em;
+            margin-top: 5px;
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            flex-grow: 1;
+            gap: 20px;
+        }
+
+        .details-panel {
+            width: 220px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+            display: none;
+        }
+
+        .details-panel h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #2d3436;
+        }
+
+        .details-panel p {
+            font-size: 0.95em;
+            color: #636e72;
+            margin-bottom: 8px;
+        }
+
+        .card {
+            width: 400px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.4s ease-out;
+            margin-top: 10px;
+        }
+
+        .card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-content h2 {
+            font-size: 1.8em;
+            margin-bottom: 8px;
+        }
+
+        .card-content p {
+            font-size: 1em;
+            margin: 8px 0;
+            color: #7f8c8d;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .buttons button {
+            flex: 1;
+            margin: 0 5px;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .buttons button:hover {
+            transform: translateY(-3px);
+        }
+
+        .like { background-color: #2ecc71; color: white; }
+        .like:hover { background-color: #27ae60; }
+
+        .pass { background-color: #e74c3c; color: white; }
+        .pass:hover { background-color: #c0392b; }
+
+        .details-btn {
+            background-color: #f1c40f;
+            color: white;
+        }
+
+        .details-btn:hover {
+            background-color: #d4ac0d;
+        }
+
+        .status-message {
+            text-align: center;
+            font-size: 1.2em;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        footer {
+            background-color: #2d3436;
+            padding: 15px 0;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            background-color: #ecf0f1;
+            border-radius: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-buttons button {
+            background-color: #dcdde1;
+            border: none;
+            font-size: 1em;
+            font-weight: 600;
+            color: #2d3436;
+            padding: 10px 16px;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-buttons button:hover {
+            background-color: #b2bec3;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>PathFindr</h1>
+        <p>Your next job opportunity is just a swipe away.</p>
+    </header>
+
+    <div class="main-content">
+        <div class="details-panel" id="detailsPanel">
+            <h3>Details</h3>
+            <p><strong>Job Title:</strong> <span id="detailTitle">-</span></p>
+            <p><strong>Company:</strong> <span id="detailCompany">-</span></p>
+            <p><strong>Description:</strong></p>
+            <p id="detailDescription">Select a job to see details.</p>
+        </div>
+
+        <div id="jobContainer"></div>
+    </div>
+
+    <div class="status-message" id="statusMessage"></div>
+
+    <footer>
+        <div class="nav-buttons">
+            <button onclick="alert('Home clicked!')">🏠 Home</button>
+            <button onclick="toggleDetails()">📄 Details</button>
+            <button onclick="alert('Profile clicked!')">👤 Profile</button>
+        </div>
+    </footer>
+
+    <script>
+        const jobs = [
+            { 
+                title: "Software Engineer", 
+                company: "ITEngineering", 
+                image: "https://via.placeholder.com/400x220", 
+                description: "Develop revolutionary applications.", 
+                details: "Full-time position with remote options and competitive benefits." 
+            },
+            { 
+                 title: "Data Analyst", 
+                company: "GoTech", 
+                image: "https://via.placeholder.com/400x220", 
+                description: "Analyze complex datasets.", 
+                details: "Seeking experienced analysts with strong SQL skills." 
+            },
+            { 
+                title: "UX/UI Designer", 
+                company: "CreativePulse", 
+                image: "https://via.placeholder.com/400x220", 
+                description: "Design user-friendly interfaces and experiences.", 
+                details: "Looking for creative designers with Figma and Adobe XD experience." 
+            },
+            { 
+                title: "Marketing Specialist", 
+                company: "BrightWave Media", 
+                image: "https://via.placeholder.com/400x220", 
+                description: "Develop and execute marketing campaigns.", 
+                details: "Experience in digital marketing and social media strategies is a plus." 
+            },
+            { 
+                title: "Cybersecurity Analyst", 
+                company: "SecureNet Solutions", 
+                image: "https://via.placeholder.com/400x220", 
+                description: "Protect systems from cyber threats and vulnerabilities.", 
+                details: "Candidates should have knowledge of network security protocols." 
+            }
+        ];
+
+
+        let currentIndex = 0;
+        const container = document.getElementById("jobContainer");
+        const statusMessage = document.getElementById("statusMessage");
+        const detailTitle = document.getElementById("detailTitle");
+        const detailCompany = document.getElementById("detailCompany");
+        const detailDescription = document.getElementById("detailDescription");
+        const detailsPanel = document.getElementById("detailsPanel");
+
+        function loadJob(index) {
+            if (index >= jobs.length) {
+                statusMessage.textContent = "No more jobs!";
+                container.innerHTML = "";
+                clearDetails();
+                return;
+            }
+
+            const job = jobs[index];
+            detailTitle.textContent = job.title;
+            detailCompany.textContent = job.company;
+            detailDescription.textContent = job.details;
+
+            container.innerHTML = `
+                <div class="card">
+                    <img src="${job.image}" alt="${job.title} Image">
+                    <div class="card-content">
+                        <h2>${job.title}</h2>
+                        <p><strong>${job.company}</strong></p>
+                        <p>${job.description}</p>
+                    </div>
+                    <div class="buttons">
+                        <button class="pass" onclick="swipe(-1)">Pass</button>
+                        <button class="details-btn" onclick="toggleDetails()">Details</button>
+                        <button class="like" onclick="swipe(1)">Like</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function swipe(direction) {
+            const card = document.querySelector(".card");
+            if (!card) return;
+
+            card.style.transform = `translateX(${direction * 500}px)`;
+
+            setTimeout(() => {
+                statusMessage.textContent = direction === 1 ? "You liked this job! 🎉" : "You passed on this job. ❌";
+                currentIndex++;
+                loadJob(currentIndex);
+            }, 400);
+        }
+
+        function clearDetails() {
+            detailTitle.textContent = "-";
+            detailCompany.textContent = "-";
+            detailDescription.textContent = "Select a job to see details.";
+        }
+
+        function toggleDetails() {
+            detailsPanel.style.display = detailsPanel.style.display === "none" ? "block" : "none";
+        }
+
+        loadJob(currentIndex);
+    </script>
+</body>
+</html>
