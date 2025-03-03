@@ -12,50 +12,72 @@
             padding: 0;
         }
 
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f9fafb;
             color: #2c3e50;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            height: 100vh;
         }
 
         header {
             background-color: #2d3436;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             color: #ecf0f1;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.6s ease-out;
         }
 
         header h1 {
-            font-size: 2.4em;
+            font-size: 2.2em;
             font-weight: 600;
         }
 
         header p {
-            font-size: 1.1em;
-            margin-top: 5px;
+            font-size: 1em;
+            margin-top: 3px;
+            opacity: 0;
+            animation: slideUp 0.6s ease-out forwards;
+            animation-delay: 0.2s;
         }
 
         .main-content {
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            padding: 20px;
+            align-items: center;
             flex-grow: 1;
-            gap: 20px;
+            padding: 10px;
+            width: 100%;
+            position: relative;
         }
 
         .details-panel {
-            width: 220px;
+            width: 250px;
             background-color: #ffffff;
             border-radius: 12px;
             padding: 15px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            height: fit-content;
-            display: none;
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%) translateX(-300px);
+            opacity: 0;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            z-index: 10;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+
+        .details-panel.show {
+            transform: translateY(-50%) translateX(0);
+            opacity: 1;
         }
 
         .details-panel h3 {
@@ -70,20 +92,45 @@
             margin-bottom: 8px;
         }
 
+        .card-container {
+            width: 550px;
+            max-width: 90%;
+            position: relative;
+            perspective: 1000px;
+            margin: 0 auto;
+        }
+
         .card {
-            width: 400px;
+            width: 100%;
             background: #fff;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            transition: transform 0.4s ease-out;
-            margin-top: 10px;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            backface-visibility: hidden;
+            animation: cardAppear 0.5s ease-out forwards;
+        }
+
+        .card.swiping-left {
+            transform: translateX(-150%) rotate(-10deg);
+            opacity: 0;
+        }
+
+        .card.swiping-right {
+            transform: translateX(150%) rotate(10deg);
+            opacity: 0;
         }
 
         .card img {
             width: 100%;
-            height: 220px;
+            height: 240px;
             object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover img {
+            transform: scale(1.05);
         }
 
         .card-content {
@@ -92,20 +139,36 @@
 
         .card-content h2 {
             font-size: 1.8em;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
 
         .card-content p {
             font-size: 1em;
-            margin: 8px 0;
+            margin: 0 0 8px 0;
             color: #7f8c8d;
+        }
+
+        .job-details {
+            background-color: #f9f9f9;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .job-details p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #2c3e50;
         }
 
         .buttons {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
+            padding: 12px;
             background-color: #f0f0f0;
             border-top: 1px solid #e0e0e0;
         }
@@ -113,17 +176,42 @@
         .buttons button {
             flex: 1;
             margin: 0 5px;
-            padding: 12px;
+            padding: 10px;
             border: none;
             border-radius: 10px;
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         .buttons button:hover {
             transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .buttons button:active {
+            transform: translateY(-1px);
+        }
+
+        .buttons button::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(0);
+            border-radius: 50%;
+            transition: transform 0.5s ease-out;
+        }
+
+        .buttons button:active::after {
+            transform: scale(3);
+            opacity: 0;
         }
 
         .like { background-color: #2ecc71; color: white; }
@@ -146,17 +234,43 @@
             font-size: 1.2em;
             margin-top: 15px;
             font-weight: 500;
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background-color: #2d3436;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 100;
+        }
+
+        .status-message.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .status-message.like {
+            background-color: #2ecc71;
+        }
+
+        .status-message.pass {
+            background-color: #e74c3c;
         }
 
         footer {
             background-color: #2d3436;
-            padding: 15px 0;
+            padding: 12px 0;
+            animation: fadeIn 0.6s ease-out;
+            margin-top: auto;
         }
 
         .nav-buttons {
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
+            padding: 8px 0;
             background-color: #ecf0f1;
             border-radius: 15px;
             max-width: 500px;
@@ -170,14 +284,59 @@
             font-size: 1em;
             font-weight: 600;
             color: #2d3436;
-            padding: 10px 16px;
+            padding: 8px 14px;
             border-radius: 12px;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
 
         .nav-buttons button:hover {
             background-color: #b2bec3;
             transform: scale(1.05);
+        }
+
+        .progress-bar {
+            width: 90%;
+            max-width: 400px;
+            height: 6px;
+            background-color: #e0e0e0;
+            margin: 8px auto;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #2ecc71;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes cardAppear {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
@@ -196,16 +355,20 @@
             <p id="detailDescription">Select a job to see details.</p>
         </div>
 
-        <div id="jobContainer"></div>
+        <div class="card-container" id="jobContainer"></div>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress" id="progressBar"></div>
     </div>
 
     <div class="status-message" id="statusMessage"></div>
 
     <footer>
         <div class="nav-buttons">
-            <button onclick="alert('Home clicked!')">🏠 Home</button>
+            <button onclick="showMessage('Hi, you do not need to touch this.', 'info')">🏠 Home</button>
             <button onclick="toggleDetails()">📄 Details</button>
-            <button onclick="alert('Profile clicked!')">👤 Profile</button>
+            <button onclick="showMessage('Hi, you do not need to touch this.', 'info')">👤 Profile</button>
         </div>
     </footer>
 
@@ -216,38 +379,112 @@
                 company: "ITEngineering", 
                 image: "https://github.com/HappyCPPD/HtmlApp/blob/main/App/Pictures/cute-photos-of-cats-in-grass-1593184777.jpg?raw=true", 
                 description: "Develop revolutionary applications.", 
-                details: "good." 
+                details: "We're looking for a talented software engineer to join our team. You'll work on projects with a variety of professionals.",
+                salary: "$90,000 - $120,000",
+                location: "SG, SG",
+                jobType: "Full-time",
+                experience: "3-5 years"
             },
             { 
-                 title: "Data Analyst", 
+                title: "Data Analyst", 
                 company: "GoTech", 
                 image: "https://github.com/HappyCPPD/HtmlApp/blob/main/App/Pictures/301c337e170aab7ad251b1853bd5d51e.jpg?raw=true", 
                 description: "Analyze complex datasets.", 
-                details: "Seeking experienced analysts with SQL skills." 
+                details: "Seeking experienced analysts with sequel skills who can analyze data, generate insights, and optimize database queries efficiently.",
+                salary: "$75,000 - $95,000",
+                location: "SG, SG",
+                jobType: "Full-time",
+                experience: "2-4 years"
             },
             { 
                 title: "UX/UI Designer", 
                 company: "Alobe", 
                 image: "https://github.com/HappyCPPD/HtmlApp/blob/main/App/Pictures/9922686feac3093cb97ff00c677594c4.jpg?raw=true", 
                 description: "Design user friendly interfaces and experiences.", 
-                details: "Looking for creative designers with Yigma and Alobe experience." 
+                details: "Looking for creative designers with Figma and Adobe experience who can create creative and beautiful user interfaces.",
+                salary: "$85,000 - $110,000",
+                location: "SG, SG",
+                jobType: "Full-time",
+                experience: "3+ years"
             },
             { 
                 title: "Marketing Specialist", 
                 company: "MediaKorp", 
                 image: "https://github.com/HappyCPPD/HtmlApp/blob/main/App/Pictures/th.jpg?raw=true", 
                 description: "Develop and execute marketing campaigns.", 
-                details: "Experience in digital marketing and social media strategies is needed." 
+                details: "Experience in digital marketing and social media strategies is needed for this role, where you'll be responsible for growing our brand presence.",
+                salary: "$65,000 - $85,000",
+                location: "SG, SG",
+                jobType: "Full-time",
+                experience: "2-5 years"
             },
             { 
                 title: "Cybersecurity Analyst", 
                 company: "MTEngineering", 
                 image: "https://github.com/HappyCPPD/HtmlApp/blob/main/App/Pictures/cute-cat-aesthetic-rilakkuma-hat-b4x2z9e5f61n0cha.jpg?raw=true", 
                 description: "Protect systems from cyber threats and vulnerabilities.", 
-                details: "Employees should have knowledge of network security protocols." 
+                details: "Employees should have knowledge of network security protocols and experience with SIEM tools and frameworks.",
+                salary: "$95,000 - $130,000",
+                location: "SG, SG",
+                jobType: "Full-time",
+                experience: "4+ years"
+            },
+            { 
+                title: "Frontend Developer", 
+                company: "WebWazards", 
+                image: "https://github.com/HappyCPPD/HtmlApp/blob/main/App/Pictures/cute-photos-of-cats-in-grass-1593184777.jpg?raw=true", 
+                description: "Build responsive and interactive web applications.", 
+                details: "Looking for developers experienced with React, Vue, or Angular who can create beautiful and functional user interfaces that work across all devices.",
+                salary: "$85,000 - $115,000",
+                location: "SG, SG",
+                jobType: "Full-time", 
+                experience: "2-4 years"
+            },
+            { 
+                title: "Backend Engineer", 
+                company: "CloudSavant", 
+                image: "https://github.com/HappyCPPD/HtmlApp/blob/main/App/Pictures/301c337e170aab7ad251b1853bd5d51e.jpg?raw=true", 
+                description: "Design and implement scalable server solutions.", 
+                details: "We need talented engineers with experience in Code.js, Kobra, or Lava to build robust APIs and services that power our applications.",
+                salary: "$90,000 - $120,000",
+                location: "SG, SG",
+                jobType: "Full-time",
+                experience: "3-5 years"
+            },
+            { 
+                title: "DevOps Engineer", 
+                company: "CloudFall", 
+                image: "https://github.com/HappyCPPD/HtmlApp/blob/main/App/Pictures/9922686feac3093cb97ff00c677594c4.jpg?raw=true", 
+                description: "Automate deployment pipelines and manage cloud infrastructure.", 
+                details: "Seeking professionals experienced with AWB, Locker, and Mubernetes who can help us optimize our proccesses.",
+                salary: "$100,000 - $140,000",
+                location: "SG, SG",
+                jobType: "Full-time",
+                experience: "4+ years"
+            },
+            { 
+                title: "Product Manager", 
+                company: "InnovaCorp", 
+                image: "https://github.com/HappyCPPD/HtmlApp/blob/main/App/Pictures/th.jpg?raw=true", 
+                description: "Define product vision and oversee development.", 
+                details: "We're looking for someone who can work closely with stakeholders, understand their needs, and guide a team to create successful products.",
+                salary: "$110,000 - $145,000",
+                location: "SG, SG",
+                jobType: "Full-time",
+                experience: "5+ years"
+            },
+            { 
+                title: "Data Scientist", 
+                company: "ClosedAi", 
+                image: "https://github.com/HappyCPPD/HtmlApp/blob/main/App/Pictures/cute-cat-aesthetic-rilakkuma-hat-b4x2z9e5f61n0cha.jpg?raw=true", 
+                description: "Build machine learning models and analyze trends.", 
+                details: "Looking for scientists with expertise in statistics, machine learning, and data visualization who can derive meaningful insights from our data.",
+                salary: "$105,000 - $150,000",
+                location: "Remote",
+                jobType: "Full-time",
+                experience: "3-6 years"
             }
         ];
-
 
         let currentIndex = 0;
         const container = document.getElementById("jobContainer");
@@ -256,12 +493,11 @@
         const detailCompany = document.getElementById("detailCompany");
         const detailDescription = document.getElementById("detailDescription");
         const detailsPanel = document.getElementById("detailsPanel");
+        const progressBar = document.getElementById("progressBar");
 
         function loadJob(index) {
             if (index >= jobs.length) {
-                statusMessage.textContent = "No more jobs!";
-                container.innerHTML = "";
-                clearDetails();
+                showNoMoreJobsMessage();
                 return;
             }
 
@@ -277,27 +513,57 @@
                         <h2>${job.title}</h2>
                         <p><strong>${job.company}</strong></p>
                         <p>${job.description}</p>
+                        <div class="job-details">
+                            <p><strong>💰 Salary:</strong> ${job.salary || 'Not specified'}</p>
+                            <p><strong>📍 Location:</strong> ${job.location || 'Remote'}</p>
+                            <p><strong>🕒 Job Type:</strong> ${job.jobType || 'Full-time'}</p>
+                            <p><strong>⭐ Experience:</strong> ${job.experience || 'Not specified'}</p>
+                        </div>
                     </div>
                     <div class="buttons">
-                        <button class="pass" onclick="swipe(-1)">Pass</button>
+                        <button class="pass" onclick="swipe('pass')">Pass</button>
                         <button class="details-btn" onclick="toggleDetails()">Details</button>
-                        <button class="like" onclick="swipe(1)">Like</button>
+                        <button class="like" onclick="swipe('like')">Like</button>
                     </div>
                 </div>
             `;
+            
+            updateProgressBar();
         }
 
-        function swipe(direction) {
+        function showNoMoreJobsMessage() {
+            container.innerHTML = `
+                <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center;">
+                    <h2>No more jobs!</h2>
+                    <p style="margin: 20px 0;">You've reviewed all available positions.</p>
+                    <button class="like" style="width: 200px;" onclick="restartJobs()">Start Over</button>
+                </div>
+            `;
+            clearDetails();
+        }
+
+        function restartJobs() {
+            currentIndex = 0;
+            loadJob(currentIndex);
+            showMessage("Starting from the beginning!", "info");
+        }
+
+        function swipe(action) {
             const card = document.querySelector(".card");
             if (!card) return;
 
-            card.style.transform = `translateX(${direction * 500}px)`;
+            if (action === 'like') {
+                card.classList.add('swiping-right');
+                showMessage("You liked this job! 🎉", "like");
+            } else {
+                card.classList.add('swiping-left');
+                showMessage("You passed on this job. ❌", "pass");
+            }
 
             setTimeout(() => {
-                statusMessage.textContent = direction === 1 ? "You liked this job! 🎉" : "You passed on this job. ❌";
                 currentIndex++;
                 loadJob(currentIndex);
-            }, 400);
+            }, 500);
         }
 
         function clearDetails() {
@@ -307,10 +573,39 @@
         }
 
         function toggleDetails() {
-            detailsPanel.style.display = detailsPanel.style.display === "none" ? "block" : "none";
+            detailsPanel.classList.toggle('show');
         }
 
-        loadJob(currentIndex);
+        function showMessage(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status-message show';
+            statusMessage.textContent = message;
+            statusMessage.className = 'status-message show';
+            if (type) statusMessage.classList.add(type);
+            
+            setTimeout(() => {
+                statusMessage.classList.remove('show');
+            }, 3000);
+        }
+        
+        function updateProgressBar() {
+            const progress = (currentIndex / jobs.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadJob(currentIndex);
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    swipe('pass');
+                } else if (e.key === 'ArrowRight') {
+                    swipe('like');
+                } else if (e.key === 'ArrowDown') {
+                    toggleDetails();
+                }
+            });
+        });
     </script>
 </body>
 </html>
